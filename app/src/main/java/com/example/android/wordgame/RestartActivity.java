@@ -11,8 +11,11 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.Random;
 
@@ -29,7 +32,7 @@ char c;
         setContentView(R.layout.activity_restart);
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        final DatabaseReference words = database.getReference("WORDS");
+        final DatabaseReference words = database.getReference("words");
 
 
         toss=findViewById(R.id.toss);
@@ -55,7 +58,30 @@ char c;
 
             }
         });
+/*
+        // Read from the database and write to make all flags as false!!
 
+        words.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
+                NewWord value = dataSnapshot.getValue(NewWord.class);
+
+                value.setFlag(false);
+                words.child(value.getKey()).setValue(value);
+
+                Log.d("making all flags false", "Value is: " + value.getWord());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w("making all flags false", "Failed to read value.", error.toException());
+            }
+        });
+
+*/
 
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,13 +97,15 @@ char c;
 
                 else
                 {
+                    //AecRef.child().setValue(itemUpload);
                     //adding to dictionary new words
                     NewWord nw= new NewWord();
                     nw.setWord(w);
                     nw.setFlag(true);
-                    nw.setKey("s00001");
+                    String k=words.push().getKey();
+                    nw.setKey(k);
                     nw.setMeaning("---");//fetch from dictionary api
-                    words.setValue(nw);
+                    words.child(k).setValue(nw);
 
 
                     Intent i= new Intent(getApplicationContext(), Playground.class);
