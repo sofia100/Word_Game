@@ -144,7 +144,6 @@ void save()
                                                                         String k=words_ref.push().getKey();
                                                                         nw.setKey(k);
                                                                         curr_key=k;
-// TODO: restart activity re b save() darkar
                                                                         i.putExtra("curr_key", curr_key);
                                                                         save();
                                                                         Log.v("key ", "current key is "+curr_key +" for word "+w);

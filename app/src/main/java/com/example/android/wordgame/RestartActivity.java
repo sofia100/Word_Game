@@ -33,6 +33,7 @@ char c;
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         final DatabaseReference words = database.getReference("words");
+        final DatabaseReference currentRef = database.getReference("current");
 
 
         toss=findViewById(R.id.toss);
@@ -106,6 +107,7 @@ char c;
                     nw.setKey(k);
                     nw.setMeaning("---");//fetch from dictionary api
                     words.child(k).setValue(nw);
+                    currentRef.setValue(k);
 
 
                     Intent i= new Intent(getApplicationContext(), Playground.class);
