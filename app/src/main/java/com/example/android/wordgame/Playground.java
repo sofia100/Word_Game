@@ -1,5 +1,6 @@
 package com.example.android.wordgame;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -11,6 +12,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.FirebaseError;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -21,14 +23,19 @@ public class Playground extends AppCompatActivity {
 TextView previous_word, new_word;
 EditText word;
 Button submit;
-String curr_key;
+String curr_key="1234567890";
     DatabaseReference curr_ref;
 
+void save()
+{
+    curr_ref.setValue(curr_key);
 
+}
     @Override
     public void onBackPressed() {
         //super.onBackPressed();
-        curr_ref.setValue(curr_key);
+        Log.v("all", "on back press");
+        save();
         Intent  i = new Intent(getApplicationContext(),MainActivity.class);
         startActivity(i);
 
@@ -43,7 +50,7 @@ String curr_key;
         final String prev_word = intent.getStringExtra("word");
         curr_key = intent.getStringExtra("curr_key");
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference words_ref = database.getReference("words");
+        final DatabaseReference words_ref = database.getReference("words");
          curr_ref = database.getReference("current");
 
 
@@ -95,19 +102,84 @@ String curr_key;
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String w=word.getText().toString();
-                String x= new_word.getText().toString();
+                final String w=word.getText().toString().trim();
+                String x= new_word.getText().toString().trim();
                 int l=x.length();
                 char c1=x.charAt(l-1);
                 char c2=w.charAt(0);
                 if ( c1==c2 || c1+32 ==c2 || c2+32==c1 ) {
 
-                    Intent i= new Intent(getApplicationContext(), Playground.class);
+                    Intent i = new Intent(getApplicationContext(), Playground.class);
                     i.putExtra("word", w);
-                    startActivity(i);
+                    //else if (word not in database) then add in database &&& if exists then currkey = tht key
+//*************continue game not working as currentKey is unable to be updated when a new word is created.. if pushed we don't know if already in db**********
+//                    words_ref.child("words").orderByChild("word").equalTo(w).once("value",snapshot => {
+//                    if (snapshot.exists()){
+//      const userData = snapshot.val();
+//                        console.log("exists!", userData);
+//                    }
+//});
+                    //                    words_ref.observeSingleEvent(of: .value, with: { (snapshot) in
+                    //                        if snapshot.exists(){
+                    //                            print("true rooms exist")
+                    //                        }else{
+                    //                            print("false room doesn't exist")
+                    //                        }
+                    //                    })
 
+                 /*   words_ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            for(DataSnapshot data: dataSnapshot.getChildren()){
+                                if (data.child(w).exists()) {
+                                    //do ur stuff
+                                    Log.v("words exists","word exist at key "+data.getKey());
+                                } else {
+                                    //do something if not exists
+                                    Log.v("words not exists","word doesnt exist ");
+
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            Log.v("words exists","cancelled");
+
+                        }
+
+
+                    });
+
+                 */
+                    words_ref.orderByChild("word").equalTo(w)
+                            .addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    Log.v("words exists", "inside this");
+                                                                    if (dataSnapshot.exists()) {
+                                                                        //bus number exists in Database
+                                                                        Log.v("words exists",w+" word exist at key "+dataSnapshot.getKey());
+
+                                                                    } else {
+                                                                        Log.v("words exists",w+ " word doesnt exist ");
+
+                                                                    }
+                                                                }
+
+                                                                @Override
+                                                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                                                                    Log.v("words exists","canceleld");
+
+
+                                                                }
+                                                            }
+                            );
+                    save();
+
+                    startActivity(i);
                 }
-                    //else if (word not in database) then add in database
+
 
                 else
                 {
