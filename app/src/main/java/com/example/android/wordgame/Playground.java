@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -20,6 +21,19 @@ public class Playground extends AppCompatActivity {
 TextView previous_word, new_word;
 EditText word;
 Button submit;
+String curr_key;
+    DatabaseReference curr_ref;
+
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+        curr_ref.setValue(curr_key);
+        Intent  i = new Intent(getApplicationContext(),MainActivity.class);
+        startActivity(i);
+
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,8 +41,10 @@ Button submit;
 
         Intent intent = getIntent();
         final String prev_word = intent.getStringExtra("word");
+        curr_key = intent.getStringExtra("curr_key");
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference words_ref = database.getReference("words");
+         curr_ref = database.getReference("current");
 
 
         Log.v("Word Received", "from previous activity is : "+prev_word);
@@ -53,7 +69,9 @@ Button submit;
 
                 for (DataSnapshot w:dataSnapshot.getChildren() ) {
                     NewWord value = w.getValue(NewWord.class);
-                    if(prev_word.charAt(prev_word.length()-1) == value.getWord().charAt(0)) //and flag==false
+                    char c1= prev_word.charAt(prev_word.length()-1) ;
+                    char c2= value.getWord().charAt(0);
+                    if(c1==c2 || c1+32 ==c2 || c1-32==c2)
                     {
                         Log.d("displaying word", "Value is: " + value.getWord());
 
@@ -80,17 +98,21 @@ Button submit;
                 String w=word.getText().toString();
                 String x= new_word.getText().toString();
                 int l=x.length();
-                char c=x.charAt(l-1);
-                if (c!= w.charAt(0))
-                    Log.v("word entered", "the word" + w+" doesn't start wid the given letter "+c);
+                char c1=x.charAt(l-1);
+                char c2=w.charAt(0);
+                if ( c1==c2 || c1+32 ==c2 || c2+32==c1 ) {
 
+                    Intent i= new Intent(getApplicationContext(), Playground.class);
+                    i.putExtra("word", w);
+                    startActivity(i);
+
+                }
                     //else if (word not in database) then add in database
 
                 else
                 {
-                    Intent i= new Intent(getApplicationContext(), Playground.class);
-                    i.putExtra("word", w);
-                    startActivity(i);
+                    Toast.makeText(Playground.this, "the word " + w + " doesn't start wid the given letter " + c1, Toast.LENGTH_SHORT).show();
+                    Log.v("word entered", "the word" + w + " doesn't start wid the given letter " + c1);
                 }
             }
         });

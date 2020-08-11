@@ -110,6 +110,7 @@ char c;
 
                     Intent i= new Intent(getApplicationContext(), Playground.class);
                     i.putExtra("word", w);
+                    i.putExtra("curr_key", k);
                     startActivity(i);
                 }
             }
