@@ -109,57 +109,33 @@ void save()
                 char c2=w.charAt(0);
                 if ( c1==c2 || c1+32 ==c2 || c2+32==c1 ) {
 
-                    Intent i = new Intent(getApplicationContext(), Playground.class);
+                    final Intent i = new Intent(getApplicationContext(), Playground.class);
                     i.putExtra("word", w);
                     //else if (word not in database) then add in database &&& if exists then currkey = tht key
 //*************continue game not working as currentKey is unable to be updated when a new word is created.. if pushed we don't know if already in db**********
-//                    words_ref.child("words").orderByChild("word").equalTo(w).once("value",snapshot => {
-//                    if (snapshot.exists()){
-//      const userData = snapshot.val();
-//                        console.log("exists!", userData);
-//                    }
-//});
-                    //                    words_ref.observeSingleEvent(of: .value, with: { (snapshot) in
-                    //                        if snapshot.exists(){
-                    //                            print("true rooms exist")
-                    //                        }else{
-                    //                            print("false room doesn't exist")
-                    //                        }
-                    //                    })
+//***************kouthi gota null rahuchi current key for which se delete heijauchi n khali 1st time pain hin save() kamakruchi
 
-                 /*   words_ref.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            for(DataSnapshot data: dataSnapshot.getChildren()){
-                                if (data.child(w).exists()) {
-                                    //do ur stuff
-                                    Log.v("words exists","word exist at key "+data.getKey());
-                                } else {
-                                    //do something if not exists
-                                    Log.v("words not exists","word doesnt exist ");
-
-                                }
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-                            Log.v("words exists","cancelled");
-
-                        }
-
-
-                    });
-
-                 */
                     words_ref.orderByChild("word").equalTo(w)
                             .addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                     Log.v("words exists", "inside this");
                                                                     if (dataSnapshot.exists()) {
                                                                         //bus number exists in Database
                                                                         Log.v("words exists",w+" word exist at key "+dataSnapshot.getKey());
+                                                                        for (DataSnapshot d:dataSnapshot.getChildren()
+                                                                             ) {
+                                                                            NewWord abc = d.getValue(NewWord.class);
+                                                                            curr_key=abc.getKey();
+
+                                                                            i.putExtra("curr_key", curr_key);
+                                                                            save();
+                                                                            Log.v("key ", "current key is "+curr_key +" for word "+w);
+
+                                                                            Log.v("words exists",w+" word exist at key "+ abc.getKey()+" word "+abc.getWord());
+
+
+                                                                        }
 
                                                                     } else {
                                                                         Log.v("words exists",w+ " word doesnt exist ");
@@ -168,9 +144,25 @@ void save()
                                                                         String k=words_ref.push().getKey();
                                                                         nw.setKey(k);
                                                                         curr_key=k;
+// TODO: restart activity re b save() darkar
+                                                                        i.putExtra("curr_key", curr_key);
+                                                                        save();
+                                                                        Log.v("key ", "current key is "+curr_key +" for word "+w);
                                                                         nw.setMeaning("---");//fetch from dictionary api
-                                                                        words_ref.child(k).setValue(nw);
-                                                                        Log.v("words exists",w+ " word added to database "+k );
+                                                                        if (k==null)
+                                                                        {
+                                                                            Log.v("key current curr_key","key is null for w= "+w);
+
+                                                                        }
+                                                                        else{
+                                                                            words_ref.child(k).setValue(nw);
+                                                                            Log.v("key current curr_key","key is not null for w= "+w +"key = "+k);
+
+                                                                            Log.v("words exists",w+ " word added to database "+k );
+
+                                                                        }
+//                                                                        words_ref.child(k).setValue(nw);
+//                                                                        Log.v("words exists",w+ " word added to database "+k );
 
 
                                                                     }
@@ -185,7 +177,7 @@ void save()
                                                             }
                             );
                     save();
-
+                    i.putExtra("curr_key", curr_key);
                     startActivity(i);
                 }
 
