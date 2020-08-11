@@ -163,6 +163,15 @@ void save()
 
                                                                     } else {
                                                                         Log.v("words exists",w+ " word doesnt exist ");
+                                                                        NewWord nw = new NewWord();
+                                                                        nw.setWord(w);
+                                                                        String k=words_ref.push().getKey();
+                                                                        nw.setKey(k);
+                                                                        curr_key=k;
+                                                                        nw.setMeaning("---");//fetch from dictionary api
+                                                                        words_ref.child(k).setValue(nw);
+                                                                        Log.v("words exists",w+ " word added to database "+k );
+
 
                                                                     }
                                                                 }
