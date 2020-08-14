@@ -78,7 +78,7 @@ void save()
                     NewWord value = w.getValue(NewWord.class);
                     char c1= prev_word.charAt(prev_word.length()-1) ;
                     char c2= value.getWord().charAt(0);
-                    if(c1==c2 || c1+32 ==c2 || c1-32==c2)
+                    if((c1==c2 || c1+32 ==c2 || c1-32==c2) && !value.getFlag())
                     {
                         Log.d("displaying word", "Value is: " + value.getWord());
 
@@ -88,8 +88,6 @@ void save()
                     Log.d("all words:", "Value is: " + value.getWord());
 
                 }
-
-                Log.d("showing words", "Value is:---==== " );
             }
 
             @Override

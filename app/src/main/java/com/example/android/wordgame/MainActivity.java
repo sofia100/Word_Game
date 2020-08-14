@@ -30,6 +30,7 @@ Button restart, resume;
         setContentView(R.layout.activity_main);
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         final DatabaseReference currRef = database.getReference("current");
+        final DatabaseReference words = database.getReference("words");
 
         restart=findViewById(R.id.restart);
         resume=findViewById(R.id.resume);
@@ -37,6 +38,34 @@ Button restart, resume;
         restart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Read from the database and write to make all flags as false!!
+
+                words.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        // This method is called once with the initial value and again
+                        // whenever data at this location is updated.
+
+                        for (DataSnapshot d:dataSnapshot.getChildren()
+                        ) {
+                            NewWord value = d.getValue(NewWord.class);
+                            //setting the value of all words as flag==false when restart is pressed
+                            words.child(value.getKey()).child("flag").setValue(false);
+                            Log.v("making all flags false", "at main activity Value is: " + value.getWord());
+
+
+                        }
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError error) {
+                        // Failed to read value
+                        Log.w("making all flags false", "Failed to read value.", error.toException());
+                    }
+                });
+
+
                 Intent i= new Intent(getApplicationContext(), RestartActivity.class);
                 startActivity(i);
             }

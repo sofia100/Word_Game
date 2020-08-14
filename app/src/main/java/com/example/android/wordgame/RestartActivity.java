@@ -1,5 +1,6 @@
 package com.example.android.wordgame;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -10,6 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -25,7 +27,7 @@ TextView randomLetter;
 EditText word;
 LinearLayout entry;
 char c;
-
+String curr_key="--";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,51 +62,24 @@ char c;
             }
         });
 
-        // Read from the database and write to make all flags as false!!
-
-        words.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-
-                for (DataSnapshot d:dataSnapshot.getChildren()
-                     ) {
-                    NewWord value = d.getValue(NewWord.class);
-
-                    //value.setFlag(false);
-                    words.child(value.getKey()).child("flag").setValue(false);
-                    Log.d("making all flags false", "Value is: " + value.getWord());
-
-
-                }
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.w("making all flags false", "Failed to read value.", error.toException());
-            }
-        });
-
 
 
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String w=word.getText().toString();
+                final String w=word.getText().toString();
 
-                if (c!= w.charAt(0))
-                    Log.v("word entered", "the word" + w+" doesn't start wid the given letter "+c);
+                if (c!= w.charAt(0)) {
+                    Log.v("word entered", "the word" + w + " doesn't start wid the given letter " + c);
 
-                //else if (word not in database) then add in database
-
+                    Toast.makeText(RestartActivity.this,"the word" + w + " doesn't start wid the given letter " + c , Toast.LENGTH_SHORT).show();
+                    //else if (word not in database) then add in database
+                }
 
 
                 else
                 {
-                    //AecRef.child().setValue(itemUpload);
+                   /* //AecRef.child().setValue(itemUpload);
                     //adding to dictionary new words
                     NewWord nw= new NewWord();
                     nw.setWord(w);
@@ -113,12 +88,78 @@ char c;
                     nw.setKey(k);
                     nw.setMeaning("---");//fetch from dictionary api
                     words.child(k).setValue(nw);
-                    currentRef.setValue(k);
+                    Log.v("submitted word at rstrt", "the word's flag is"+nw.getFlag());
+                    currentRef.setValue(k);*/
 
-
-                    Intent i= new Intent(getApplicationContext(), Playground.class);
+                    final Intent i= new Intent(getApplicationContext(), Playground.class);
                     i.putExtra("word", w);
-                    i.putExtra("curr_key", k);
+
+                    words.orderByChild("word").equalTo(w)
+                            .addListenerForSingleValueEvent(new ValueEventListener() {
+                                                                @Override
+                                                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                                    Log.v("words exists", "inside this");
+                                                                    if (dataSnapshot.exists()) {
+                                                                        //bus number exists in Database
+                                                                        Log.v("words exists",w+" word exist at key "+dataSnapshot.getKey());
+                                                                        for (DataSnapshot d:dataSnapshot.getChildren()
+                                                                        ) {
+                                                                            NewWord abc = d.getValue(NewWord.class);
+                                                                            curr_key=abc.getKey();
+
+                                                                            i.putExtra("curr_key", curr_key);
+                                                                            currentRef.setValue(curr_key);
+
+
+                                                                            Log.v("key ", "current key is "+curr_key +" for word "+w);
+
+                                                                            Log.v("words exists",w+" word exist at key "+ abc.getKey()+" word "+abc.getWord());
+
+
+                                                                        }
+
+                                                                    } else {
+                                                                        Log.v("words exists",w+ " word doesnt exist ");
+                                                                        NewWord nw = new NewWord();
+                                                                        nw.setWord(w);
+                                                                        String k=words.push().getKey();
+                                                                        nw.setKey(k);
+                                                                        curr_key=k;
+                                                                        i.putExtra("curr_key", curr_key);
+                                                                        currentRef.setValue(curr_key);
+
+                                                                        Log.v("key ", "current key is "+curr_key +" for word "+w);
+                                                                        nw.setMeaning("---");//fetch from dictionary api
+                                                                        if (k==null)
+                                                                        {
+                                                                            Log.v("key current curr_key","key is null for w= "+w);
+
+                                                                        }
+                                                                        else{
+                                                                            words.child(k).setValue(nw);
+                                                                            Log.v("key current curr_key","key is not null for w= "+w +"key = "+k);
+
+                                                                            Log.v("words exists",w+ " word added to database "+k );
+
+                                                                        }
+//                                                                        words_ref.child(k).setValue(nw);
+//                                                                        Log.v("words exists",w+ " word added to database "+k );
+
+
+                                                                    }
+                                                                }
+
+                                                                @Override
+                                                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                                                                    Log.v("words exists","canceleld");
+
+
+                                                                }
+                                                            }
+                            );
+
+
+
                     startActivity(i);
                 }
             }
