@@ -67,7 +67,7 @@ String curr_key="--";
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final String w=word.getText().toString();
+                final String w=word.getText().toString().toUpperCase();
 
                 if (c!= w.charAt(0)) {
                     Log.v("word entered", "the word" + w + " doesn't start wid the given letter " + c);
@@ -123,7 +123,7 @@ String curr_key="--";
                                                                     } else {
                                                                         Log.v("words exists",w+ " word doesnt exist ");
                                                                         NewWord nw = new NewWord();
-                                                                        nw.setWord(w);
+                                                                        nw.setWord(w.toUpperCase());
                                                                         String k=words.push().getKey();
                                                                         nw.setKey(k);
                                                                         nw.setFlag(true);

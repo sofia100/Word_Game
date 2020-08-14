@@ -104,8 +104,8 @@ void save()
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final String w=word.getText().toString().trim();
-                String x= new_word.getText().toString().trim();
+                final String w=word.getText().toString().trim().toUpperCase();
+                String x= new_word.getText().toString().trim().toUpperCase();
                 int l=x.length();
                 char c1=x.charAt(l-1);
                 char c2=w.charAt(0);
@@ -163,7 +163,7 @@ void save()
                                                                     } else {
                                                                         Log.v("words exists",w+ " word doesnt exist ");
                                                                         NewWord nw = new NewWord();
-                                                                        nw.setWord(w);
+                                                                        nw.setWord(w.toUpperCase());
                                                                         nw.setFlag(true);
                                                                         String k=words_ref.push().getKey();
                                                                         nw.setKey(k);
