@@ -59,7 +59,7 @@ char c;
 
             }
         });
-/*
+
         // Read from the database and write to make all flags as false!!
 
         words.addValueEventListener(new ValueEventListener() {
@@ -67,12 +67,18 @@ char c;
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
-                NewWord value = dataSnapshot.getValue(NewWord.class);
 
-                value.setFlag(false);
-                words.child(value.getKey()).setValue(value);
+                for (DataSnapshot d:dataSnapshot.getChildren()
+                     ) {
+                    NewWord value = d.getValue(NewWord.class);
 
-                Log.d("making all flags false", "Value is: " + value.getWord());
+                    //value.setFlag(false);
+                    words.child(value.getKey()).child("flag").setValue(false);
+                    Log.d("making all flags false", "Value is: " + value.getWord());
+
+
+                }
+
             }
 
             @Override
@@ -82,7 +88,7 @@ char c;
             }
         });
 
-*/
+
 
         submit.setOnClickListener(new View.OnClickListener() {
             @Override

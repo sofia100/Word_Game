@@ -47,7 +47,7 @@ Button restart, resume;
             public void onClick(View view) {
                 final Intent i= new Intent(getApplicationContext(), Playground.class);
 // Read from the database
-                Log.v("resume :", "Value is: ");
+                Log.v("resume :", "reached here ");
 
                 currRef.addValueEventListener(new ValueEventListener() {
                     @Override
@@ -55,10 +55,11 @@ Button restart, resume;
                         // This method is called once with the initial value and again
                         // whenever data at this location is updated.
                         String key = dataSnapshot.getValue(String.class);
-                        Log.v("resume retrieve key", "Value is: " + key);
+                        Log.v("resume retrieve key", "last current key is: " + key);
                         i.putExtra("curr_key", key);
                         if(!key.equals("1234567890")) {
                             DatabaseReference wordsRef = database.getReference("words/" + key);
+                            Log.v("resume :", "reached here222 key "+key);
 
                             // Read from the database
                             wordsRef.addValueEventListener(new ValueEventListener() {
@@ -66,11 +67,20 @@ Button restart, resume;
                                 public void onDataChange(DataSnapshot dataSnapshot) {
                                     // This method is called once with the initial value and again
                                     // whenever data at this location is updated.
-                                    NewWord value = dataSnapshot.getValue(NewWord.class);
-                                    Log.v("word retrieve", "Value is: " + value.getWord());
-                                    i.putExtra("word", value.getWord());
-                                }
+                                    Log.v("resume :", "reached here 333 key ");
 
+                                    for (DataSnapshot d :dataSnapshot.getChildren()
+                                         ) {
+                                        Log.v("resume :", "reached here 444 key ");
+
+                                        NewWord value = dataSnapshot.getValue(NewWord.class);
+                                        Log.v("word retrieve", "Value is: " + value.getWord());
+                                        i.putExtra("word", value.getWord());
+                                        Log.v("resume :", "reached here222 key "+value.getKey());
+
+                                    }
+                                }
+// TODO: restart activity pare resume karile only "reached here" but starting ru karile playground activity open houchi but kama karuni..both crash ..most probably java xml connectn or idk yet
                                 @Override
                                 public void onCancelled(DatabaseError error) {
                                     // Failed to read value
