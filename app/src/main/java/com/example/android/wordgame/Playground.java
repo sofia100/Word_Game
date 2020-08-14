@@ -66,7 +66,7 @@ void save()
         //new_word retrieve from db
         // Read from the database and write to make all flags as false!!
 
-        words_ref.addValueEventListener(new ValueEventListener() {
+        words_ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // This method is called once with the initial value and again
@@ -81,8 +81,11 @@ void save()
                     if((c1==c2 || c1+32 ==c2 || c1-32==c2) && !value.getFlag())
                     {
                         Log.d("displaying word", "Value is: " + value.getWord());
+                        words_ref.child(value.getKey()).child("flag").setValue(true);//flag =true
+
 
                         new_word.setText(value.getWord());
+                        break;
 
                     }
                     Log.d("all words:", "Value is: " + value.getWord());
@@ -93,7 +96,7 @@ void save()
             @Override
             public void onCancelled(DatabaseError error) {
                 // Failed to read value
-                Log.w("making all flags false", "Failed to read value.", error.toException());
+                Log.w("displaying word from db", "Failed to read value.", error.toException());
             }
         });
 
