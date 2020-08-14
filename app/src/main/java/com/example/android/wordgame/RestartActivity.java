@@ -106,6 +106,8 @@ String curr_key="--";
                                                                         ) {
                                                                             NewWord abc = d.getValue(NewWord.class);
                                                                             curr_key=abc.getKey();
+                                                                            words.child(abc.getKey()).child("flag").setValue(true);//flag =true
+
 
                                                                             i.putExtra("curr_key", curr_key);
                                                                             currentRef.setValue(curr_key);
@@ -124,6 +126,7 @@ String curr_key="--";
                                                                         nw.setWord(w);
                                                                         String k=words.push().getKey();
                                                                         nw.setKey(k);
+                                                                        nw.setFlag(true);
                                                                         curr_key=k;
                                                                         i.putExtra("curr_key", curr_key);
                                                                         currentRef.setValue(curr_key);

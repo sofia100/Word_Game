@@ -38,9 +38,9 @@ Button restart, resume;
         restart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Read from the database and write to make all flags as false!!
+                // Read from the database and write to make all flags as false!!  only for once thus listner for single evnt
 
-                words.addValueEventListener(new ValueEventListener() {
+                words.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         // This method is called once with the initial value and again

@@ -105,7 +105,7 @@ void save()
                 int l=x.length();
                 char c1=x.charAt(l-1);
                 char c2=w.charAt(0);
-                if ( c1==c2 || c1+32 ==c2 || c2+32==c1 ) {
+                if ( c1==c2 || c1+32 ==c2 || c2+32==c1 ) {// letter matching
 
                     final Intent i = new Intent(getApplicationContext(), Playground.class);
                     i.putExtra("word", w);
@@ -113,18 +113,24 @@ void save()
 //*************continue game not working as currentKey is unable to be updated when a new word is created.. if pushed we don't know if already in db**********
 //***************kouthi gota null rahuchi current key for which se delete heijauchi n khali 1st time pain hin save() kamakruchi
 
-                    words_ref.orderByChild("word").equalTo(w)
-                            .addListenerForSingleValueEvent(new ValueEventListener() {
+                    words_ref.orderByChild("word").equalTo(w)//prev word exsists then use only the key for current key and flag = true
+                            .addValueEventListener(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                     Log.v("words exists", "inside this");
-                                                                    if (dataSnapshot.exists()) {
-                                                                        //bus number exists in Database
+                                                                    if (dataSnapshot.exists()) {//prev word exists
                                                                         Log.v("words exists",w+" word exist at key "+dataSnapshot.getKey());
                                                                         for (DataSnapshot d:dataSnapshot.getChildren()
                                                                              ) {
-                                                                            NewWord abc = d.getValue(NewWord.class);
-                                                                            curr_key=abc.getKey();
+                                                                            NewWord abc = d.getValue(NewWord.class); //retrieve word
+                                                                            curr_key=abc.getKey();//current key updated as string
+                                                                            Log.v("flags", abc.getWord() +"  here");
+
+                                                                            //make true flag
+                                                                            words_ref.child(abc.getKey()).child("flag").setValue(true);//flag =true
+                                                                            Log.v("flags","flag for word "+ abc.getWord()+" is "+abc.getFlag());
+
+                                                                            Log.v("flags", abc.getWord() +"  here2");
 
                                                                             i.putExtra("curr_key", curr_key);
                                                                             save();
@@ -139,6 +145,7 @@ void save()
                                                                         Log.v("words exists",w+ " word doesnt exist ");
                                                                         NewWord nw = new NewWord();
                                                                         nw.setWord(w);
+                                                                        nw.setFlag(true);
                                                                         String k=words_ref.push().getKey();
                                                                         nw.setKey(k);
                                                                         curr_key=k;
