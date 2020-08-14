@@ -23,6 +23,7 @@ public class Playground extends AppCompatActivity {
 TextView previous_word, new_word;
 EditText word;
 Button submit;
+boolean flagForNext = true;
 String curr_key="1234567890";
     DatabaseReference curr_ref;
 
@@ -116,8 +117,8 @@ void save()
 //*************continue game not working as currentKey is unable to be updated when a new word is created.. if pushed we don't know if already in db**********
 //***************kouthi gota null rahuchi current key for which se delete heijauchi n khali 1st time pain hin save() kamakruchi
 
-                    words_ref.orderByChild("word").equalTo(w)//prev word exsists then use only the key for current key and flag = true
-                            .addValueEventListener(new ValueEventListener() {
+                    words_ref.orderByChild("word").equalTo(w)//prev word exists then use only the key for current key and flag = true
+                            .addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                     Log.v("words exists", "inside this");
@@ -129,18 +130,33 @@ void save()
                                                                             curr_key=abc.getKey();//current key updated as string
                                                                             Log.v("flags", abc.getWord() +"  here");
 
-                                                                            //make true flag
-                                                                            words_ref.child(abc.getKey()).child("flag").setValue(true);//flag =true
-                                                                            Log.v("flags","flag for word "+ abc.getWord()+" is "+abc.getFlag());
+                                                                            if(!abc.getFlag()) {
+                                                                                //make true flag
+                                                                                words_ref.child(abc.getKey()).child("flag").setValue(true);//flag =true
+                                                                                Log.v("flags", "flag for word " + abc.getWord() + " is " + abc.getFlag());
 
-                                                                            Log.v("flags", abc.getWord() +"  here2");
+                                                                                Log.v("flags", abc.getWord() + "  here2");
 
-                                                                            i.putExtra("curr_key", curr_key);
-                                                                            save();
-                                                                            Log.v("key ", "current key is "+curr_key +" for word "+w);
+                                                                                i.putExtra("curr_key", curr_key);
+                                                                                save();
+                                                                                Log.v("key ", "current key is " + curr_key + " for word " + w);
 
-                                                                            Log.v("words exists",w+" word exist at key "+ abc.getKey()+" word "+abc.getWord());
+                                                                                Log.v("words exists", w + " word exist at key " + abc.getKey() + " word " + abc.getWord());
+                                                                                save();
+                                                                                Log.v("flag for next", w+ " how flag for next "+ flagForNext );
 
+                                                                                i.putExtra("curr_key", curr_key);
+                                                                                startActivity(i);
+
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                flagForNext=false;
+                                                                                Log.v("flag for next", "Word is already used. Try a new word : "+ flagForNext );
+
+                                                                                Toast.makeText(Playground.this, "Word is already used. Try a new word", Toast.LENGTH_SHORT).show();
+                                                                                //make no intent stay here
+                                                                            }
 
                                                                         }
 
@@ -171,6 +187,11 @@ void save()
 //                                                                        words_ref.child(k).setValue(nw);
 //                                                                        Log.v("words exists",w+ " word added to database "+k );
 
+                                                                        save();
+                                                                        Log.v("flag for next", w+ " how flag for next "+ flagForNext );
+
+                                                                        i.putExtra("curr_key", curr_key);
+                                                                        startActivity(i);
 
                                                                     }
                                                                 }
@@ -183,9 +204,20 @@ void save()
                                                                 }
                                                             }
                             );
-                    save();
-                    i.putExtra("curr_key", curr_key);
-                    startActivity(i);
+                    /*if(flagForNext) {
+                        save();
+                        Log.v("flag for next", w+ " how flag for next "+ flagForNext );
+
+                        i.putExtra("curr_key", curr_key);
+                        startActivity(i);
+                    }
+
+                    else
+                    {
+                        word.setText(" null ");
+                        Log.v("flag for next", w+ " how flag for next here "+ flagForNext );
+
+                    }*/
                 }
 
 
