@@ -17,7 +17,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.sql.Ref;
 
 public class MainActivity extends AppCompatActivity {
-Button restart, resume;
+Button restart, resume, addword;
 
     @Override
     public void onBackPressed() {
@@ -34,6 +34,14 @@ Button restart, resume;
 
         restart=findViewById(R.id.restart);
         resume=findViewById(R.id.resume);
+        addword=findViewById(R.id.add_word);
+
+        addword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getApplicationContext(), AddWord.class));
+            }
+        });
 
         restart.setOnClickListener(new View.OnClickListener() {
             @Override

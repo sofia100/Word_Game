@@ -55,7 +55,7 @@ String curr_key="--";
                 randomLetter.setText(Character.toString(c));
                 Log.v("toss", "letter random dispalyed: "+randomLetter.getText());
 
-                toss.setVisibility(View.INVISIBLE);
+                toss.setVisibility(View.GONE);
                 entry.setVisibility(View.VISIBLE);
 
 

@@ -23,15 +23,15 @@
         android:layout_height="wrap_content"
         android:id="@+id/toss_text"
         android:hint="Start with letter : "
-        android:textSize="30sp"
-        android:layout_margin="16dp"
+        android:textSize="20sp"
+        android:layout_margin="8dp"
         />
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/random_letter"
         android:textSize="30sp"
-        android:layout_margin="16dp"
+        android:layout_margin="8dp"
         android:text="--"
         />
 <LinearLayout
@@ -47,21 +47,22 @@
         android:id="@+id/editext_text"
         android:hint="Type your word : "
         android:textColor="@color/colorPrimaryDark"
-        android:textSize="30sp"
-        android:layout_margin="16dp"
+        android:textSize="20sp"
+        android:layout_margin="8dp"
         />
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:hint="enter your word"
         android:id="@+id/word"
-        android:layout_margin="@android:dimen/app_icon_size"
+        android:selectAllOnFocus="true"
+        android:layout_margin="8dp"
         />
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Submit"
-        android:layout_margin="@android:dimen/app_icon_size"
+        android:layout_margin="8dp"
         android:id="@+id/submit"
         />
 </LinearLayout>

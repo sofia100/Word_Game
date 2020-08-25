@@ -33,6 +33,13 @@
         android:layout_margin="16dp"
         android:id="@+id/resume"
         />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add a word"
+        android:layout_margin="16dp"
+        android:id="@+id/add_word"
+        />
 
 
 </LinearLayout>
